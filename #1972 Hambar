@@ -1,0 +1,54 @@
+#include <fstream>
+#include <vector>
+std::ifstream fin("hambar.in");
+std::ofstream fout("hambar.out");
+int n,ariemax,m;
+std::vector<std::pair<int,int>>v;
+
+bool inline cond(int x1, int y1, int x2, int y2) 
+{
+    return (x1<=n&x2<=n&&y1<=n&&y2<=n&&y1>0&&y2>0&&x1>0&&x2>0&&x1<=x2&&y1<=y2);
+}
+
+void solve(int x1, int y1, int x2, int y2 ,int k)
+{
+    if(!cond(x1,y1,x2,y2))return;
+
+    int arie=(1+x2-x1)*(y2-y1+1);
+    for(int d=k;d<v.size();++d)
+    {
+        if(v[d].first>=x1&&v[d].first<=x2&&v[d].second>=y1&&v[d].second<=y2){
+
+            int i=v[d].first,j=v[d].second;
+
+            if((x2-x1+1)*(y2-j)>ariemax)
+                solve(x1,j+1,x2,y2,d+1);
+
+            if((x2-i)*(y2-y1+1)>ariemax)
+                solve(i+1,y1,x2,y2,d+1);
+
+            if((x2-x1+1)*(j-y1)>ariemax)
+                solve(x1,y1,x2,j-1,d+1);
+
+            if((i-x1)*(y2-y1+1)>ariemax)
+                solve(x1,y1,i-1,y2,d+1);
+
+            return;
+        }
+
+    }
+    ariemax=arie;
+}
+int main()
+{
+    fin>>n>>m;
+    while(m--)
+    {
+        int x,y;
+        fin>>x>>y;
+        v.push_back(std::make_pair(x,y));
+    }
+    solve(1,1,n,n,0);
+    fout<<ariemax;
+    return 0;
+}
